@@ -24,6 +24,6 @@ public class Produto
     public DateTime DataCadastro { get; set;}
     public int CategoriaId { get; set; }//Mapear a categoria Id de produtos
     [JsonIgnore]
-    public Categoria Categoria { get; set; }//Relacionamento de produto e categoria nessa prop de navegação
+    public Categoria? Categoria { get; set; }//Relacionamento de produto e categoria nessa prop de navegação
 }
  

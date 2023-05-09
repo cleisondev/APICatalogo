@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APICatalogo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230506022200_NotRquired")]
-    partial class NotRquired
+    [Migration("20230508225833_Ajustes")]
+    partial class Ajustes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

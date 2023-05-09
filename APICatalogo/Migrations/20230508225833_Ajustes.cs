@@ -4,7 +4,7 @@
 
 namespace APICatalogo.Migrations
 {
-    public partial class NotRquired : Migration
+    public partial class Ajustes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

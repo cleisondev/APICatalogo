@@ -1,6 +1,8 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace APICatalogo.Controllers
 {
@@ -42,7 +44,7 @@ namespace APICatalogo.Controllers
             return produto;
         }
 
-        [HttpPost]
+        [HttpPost] 
         public ActionResult Post(Produto produto)
         {
             if(produto is null)
@@ -56,6 +58,35 @@ namespace APICatalogo.Controllers
             //Recomendado retornar o status 201 created, colocar no cabecario location da resposta HTTP a URL do novo recurso criado
             //Defino o nome, qual o Id do produto que no caso é o Id novo, e o produto em si.
             return new CreatedAtRouteResult("ObterProduto", new {id = produto.ProdutoId}, produto);
+        }
+
+        [HttpPut("{id:int}")]//Implementando o ID pra procurar por ID
+        public ActionResult Put(int id, Produto produto)//Id pra achar o produto e o Produto pra colocar o novo produto
+        {
+            if(id != produto.ProdutoId)
+            {
+                return BadRequest();
+            }
+
+            _dbContext.Entry(produto).State = EntityState.Modified;//Definir o estado do contexto pra modificado
+            _dbContext.SaveChanges();
+
+            return Ok(produto);
+        }
+
+
+        [HttpDelete("{id:int}")]//Passando Id na URL
+        public ActionResult Delete(int? id)
+        {
+            if (id is null)
+                return NotFound("Produto não localizado..."); 
+
+
+            var produto = _dbContext.Produtos.FirstOrDefault(x => x.ProdutoId == id);//Encontrando o produto pelo Id
+            _dbContext.Produtos.Remove(produto);//Removendo o  produto do banco
+            _dbContext.SaveChanges();//Salvando no contexto
+
+            return Ok(produto);
         }
 
 
