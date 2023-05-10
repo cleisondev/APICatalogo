@@ -16,29 +16,42 @@ namespace APICatalogo.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpGet("produtos")]
-        public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
-        {
-            return _dbContext.Categorias.Include(p => p.Produtos).ToList();
-        }
-
 
         [HttpGet]
         public ActionResult<IEnumerable<Categoria>> Get()
         {
-            return _dbContext.Categorias.ToList();
+            try
+            {
+                return _dbContext.Categorias.AsNoTracking().ToList();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Ocorreu um problema ao tratar a sua solicitação.");
+            }
         }
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]//Pra usar o get passando o ID, eu coloco aqui no método, e :int restringe o tipo de valor
         public ActionResult<Categoria> Get(int id) //Passando o parametro Id que será usado pra buscar apenas por Id
         {
-            var categoria = _dbContext.Categorias.FirstOrDefault(x => x.CategoriaId == id);//A variavel produtos ela vai pegar o primeiro Produto que tiver o Id igual ao do parametro
-            if (categoria is null)
+
+            try
             {
-                return NotFound("Produto não encontrado");
+                var categoria = _dbContext.Categorias.FirstOrDefault(x => x.CategoriaId == id);//A variavel produtos ela vai pegar o primeiro Produto que tiver o Id igual ao do parametro
+                if (categoria is null)
+                {
+                    return NotFound("Produto não encontrado");
+                }
+
+                return Ok(categoria);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Ocorreu um problema ao tratar a sua solicitação.");
             }
 
-            return Ok(categoria);
+          
         }
 
         [HttpPost]
@@ -75,7 +88,7 @@ namespace APICatalogo.Controllers
         public ActionResult Delete(int? id)
         {
             if (id is null)
-                return NotFound("Produto não localizado...");
+                return NotFound($"Produto com id = {id} não localizado...");
 
 
             var categoria = _dbContext.Categorias.FirstOrDefault(x => x.CategoriaId == id);//Encontrando o produto pelo Id
