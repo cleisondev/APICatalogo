@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace APICatalogo.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ProdutosController : ControllerBase
     {
@@ -18,6 +18,22 @@ namespace APICatalogo.Controllers
         {
             _dbContext = dbContext;
         }
+
+
+
+        [HttpGet("primeiro")]//Afirmando o metodo
+        public ActionResult<Produto> GetPrimeiro() //Se quero todas informações, recebo em formato de coleçao, por isso IEnumerable
+        {
+
+            var produto = _dbContext.Produtos.FirstOrDefault(); //Crio uma variavel, passo a variavel do contexto e de onde quero a info e mando em formato lista
+            if (produto is null)
+            {
+                return NotFound("Produtos não encontrados");//Tive que usar action result pra suportar o retorno de um tipo diferende de IEnumerable
+            }
+
+            return produto;
+        }
+
 
         [HttpGet]//Afirmando o metodo
         public ActionResult<IEnumerable<Produto>> Get() //Se quero todas informações, recebo em formato de coleçao, por isso IEnumerable
@@ -43,6 +59,22 @@ namespace APICatalogo.Controllers
 
             return produto;
         }
+
+
+        [HttpGet("{nome}", Name = "ObterProdutoNome")]//Pegando todos produtos que contém esse nome
+        public ActionResult<List<Produto>> Get(string nome) //Passando o parametro Id que será usado pra buscar apenas por Id
+        {
+            var produto = _dbContext.Produtos.Where(x => x.Nome.StartsWith(nome)).ToList();//A variavel produtos ela vai pegar o primeiro Produto que tiver o Id igual ao do parametro
+            if (produto is null)
+            {
+                return NotFound("Produto não encontrado");
+            }
+
+            return produto;
+        }
+
+
+
 
         [HttpPost] 
         public ActionResult Post(Produto produto)
